@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Ethics Ternary — Present vs 2075</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+  <style>
+    :root{
+      --blue-900:#0b1f3a; --blue-700:#1d4ed8; --blue-500:#3b82f6; --blue-100:#dbeafe;
+      --green-900:#0a2d1f; --green-700:#059669; --green-500:#22c55e; --green-100:#dcfce7;
+      --ink:#0f172a; --muted:#6b7280; --bg:#f8fafc; --card:#ffffff; --ring:#e5e7eb;
+    }
+    html,body{margin:0;padding:0;background:linear-gradient(135deg, var(--blue-100), var(--green-100));}
+    body{font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; color:var(--ink); padding:24px;}
+    .wrap{max-width:1100px;margin:0 auto;}
+    .hero{
+      background: radial-gradient(1200px 400px at 20% -20%, rgba(34,197,94,.25), transparent),
+                  radial-gradient(1000px 400px at 100% 0%, rgba(59,130,246,.25), transparent),
+                  linear-gradient(180deg, #fff, #fafcff);
+      border:1px solid var(--ring); border-radius:16px; padding:22px 20px; margin-bottom:24px;
+      display:flex; align-items:center; gap:16px;
+    }
+    .dot {width:12px;height:12px;border-radius:50%;}
+    .row{display:grid;grid-template-columns:1fr;gap:18px;}
+    @media (min-width: 980px){ .row{grid-template-columns:1fr 1fr;} }
+    .card{background:var(--card); border:1px solid var(--ring); border-radius:14px; padding:16px;}
+    h1{font-size:22px;margin:0 0 6px}
+    h2{font-size:18px;margin:0 0 8px}
+    p{margin:0 0 10px}
+    .muted{color:var(--muted)}
+    .sliders{display:grid;grid-template-columns:160px 1fr 60px;gap:10px;align-items:center}
+    input[type=range]{width:100%}
+    .btn{padding:12px 16px;border:0;border-radius:12px;font-weight:700;cursor:pointer}
+    .btn-primary{background:linear-gradient(135deg, var(--blue-700), var(--green-700)); color:#fff}
+    .tag{display:inline-flex;gap:8px;align-items:center;padding:6px 10px;border-radius:999px;font-size:13px;font-weight:600}
+    .tag-blue{background:rgba(59,130,246,.12);color:var(--blue-700)}
+    .tag-green{background:rgba(34,197,94,.12);color:var(--green-700)}
+    .plotWrap{position:relative}
+    .overlay{
+      position:absolute; left:0; top:0; right:0; bottom:0; cursor:crosshair;
+      /* transparent click layer */
+    }
+    .legend{
+      display:flex;gap:8px;flex-wrap:wrap;margin-top:8px
+    }
+    .blue {color: var(--blue-700)}
+    .green {color: var(--green-700)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <div>
+        <h1>Human Well-Being vs Technological Progress vs Environmental Integrity</h1>
+        <p class="muted">Click inside a triangle to place the dot. Sliders & dot always sum to 100.</p>
+        <div class="legend">
+          <span class="tag tag-blue"><span class="dot" style="background:var(--blue-500)"></span>Present (2025)</span>
+          <span class="tag tag-green"><span class="dot" style="background:var(--green-500)"></span>Future (2075)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- PRESENT -->
+      <div class="card">
+        <h2 class="blue">Present (2025)</h2>
+        <div class="plotWrap">
+          <div id="presentPlot" style="height:420px;"></div>
+          <div id="presentOverlay" class="overlay" title="Click to place the dot"></div>
+        </div>
+        <div class="card" style="margin-top:10px;background:linear-gradient(180deg,#fff,rgba(59,130,246,.06))">
+          <div class="sliders">
+            <div><strong>Human Well-Being</strong></div>
+            <input id="p-hwb" type="range" min="0" max="100" value="34" step="1"/>
+            <output id="p-hwb-val">34</output>
+
+            <div><strong>Technological Progress</strong></div>
+            <input id="p-tech" type="range" min="0" max="100" value="33" step="1"/>
+            <output id="p-tech-val">33</output>
+
+            <div><strong>Environmental Integrity</strong></div>
+            <input id="p-env" type="range" min="0" max="100" value="33" step="1"/>
+            <output id="p-env-val">33</output>
+          </div>
+          <p class="muted">Total: <span id="p-total">100</span></p>
+        </div>
+      </div>
+
+      <!-- FUTURE -->
+      <div class="card">
+        <h2 class="green">Future (2075)</h2>
+        <div class="plotWrap">
+          <div id="futurePlot" style="height:420px;"></div>
+          <div id="futureOverlay" class="overlay" title="Click to place the dot"></div>
+        </div>
+        <div class="card" style="margin-top:10px;background:linear-gradient(180deg,#fff,rgba(34,197,94,.08))">
+          <div class="sliders">
+            <div><strong>Human Well-Being</strong></div>
+            <input id="f-hwb" type="range" min="0" max="100" value="34" step="1"/>
+            <output id="f-hwb-val">34</output>
+
+            <div><strong>Technological Progress</strong></div>
+            <input id="f-tech" type="range" min="0" max="100" value="33" step="1"/>
+            <output id="f-tech-val">33</output>
+
+            <div><strong>Environmental Integrity</strong></div>
+            <input id="f-env" type="range" min="0" max="100" value="33" step="1"/>
+            <output id="f-env-val">33</output>
+          </div>
+          <p class="muted">Total: <span id="f-total">100</span></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:18px">
+      <button id="submitBtn" class="btn btn-primary">Submit both (Present + 2075)</button>
+      <span id="status" class="muted" style="margin-left:10px"></span>
+    </div>
+  </div>
+
+  <script>
+    // ---------- Utilities ----------
+    const clamp01 = x => Math.max(0, Math.min(1, x));
+    function uuid() {
+      return crypto.randomUUID ? crypto.randomUUID() :
+        'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c=>{
+          const r = Math.random()*16|0, v = c==='x'?r:(r&0x3|0x8); return v.toString(16);
+        });
+    }
+    function normalizeTriple(a,b,c){
+      const sum = a+b+c || 1;
+      return [a*100/sum, b*100/sum, c*100/sum];
+    }
+    function roundTo100([A,B,C]){
+      let a=Math.round(A), b=Math.round(B), c=Math.round(C);
+      const drift = 100 - (a+b+c);
+      if(drift){
+        if (a>=b && a>=c) a+=drift; else if (b>=a && b>=c) b+=drift; else c+=drift;
+      }
+      return [a,b,c];
+    }
+    function setSliders(prefix, [a,b,c]){
+      document.getElementById(`${prefix}-hwb`).value = a;
+      document.getElementById(`${prefix}-tech`).value = b;
+      document.getElementById(`${prefix}-env`).value = c;
+      document.getElementById(`${prefix}-hwb-val`).textContent = a;
+      document.getElementById(`${prefix}-tech-val`).textContent = b;
+      document.getElementById(`${prefix}-env-val`).textContent = c;
+      document.getElementById(`${prefix}-total`).textContent = a+b+c;
+    }
+    function currentTriple(prefix){
+      return [
+        parseInt(document.getElementById(`${prefix}-hwb`).value,10),
+        parseInt(document.getElementById(`${prefix}-tech`).value,10),
+        parseInt(document.getElementById(`${prefix}-env`).value,10)
+      ];
+    }
+
+    // ---------- Plotly setup ----------
+    function makeTernary(targetId, tri, color){
+      const data = [{
+        type: 'scatterternary',
+        mode: 'markers',
+        a: [tri[0]], b: [tri[1]], c: [tri[2]],
+        marker: { size: 12, color }
+      }];
+      const layout = {
+        margin: {l: 18, r: 18, b: 18, t: 10},
+        ternary: {
+          sum: 100,
+          aaxis: { title: 'Human Well-Being', min: 0, ticksuffix: '%' },
+          baxis: { title: 'Technological Progress', min: 0, ticksuffix: '%' },
+          caxis: { title: 'Environmental Integrity', min: 0, ticksuffix: '%' }
+        }
+      };
+      const config = { displayModeBar:false, staticPlot:true, responsive:true };
+      Plotly.newPlot(targetId, data, layout, config);
+    }
+    function updatePoint(targetId, [a,b,c], color){
+      Plotly.react(targetId, [{
+        type:'scatterternary', mode:'markers', a:[a], b:[b], c:[c],
+        marker:{ size:12, color }
+      }], (document.getElementById(targetId)).layout, {displayModeBar:false, staticPlot:true});
+    }
+
+    // ---------- Click mapping (overlay → barycentric) ----------
+    // Treat triangle as A(top), B(bottom-left), C(bottom-right)
+    function overlayToABC(overlayEl, event){
+      const rect = overlayEl.getBoundingClientRect();
+      const px = event.clientX - rect.left;
+      const py = event.clientY - rect.top;
+      const w = rect.width, h = rect.height;
+
+      const A = {x: 0.5*w, y: 0};
+      const B = {x: 0,     y: h};
+      const C = {x: w,     y: h};
+
+      // Barycentric weights of P wrt triangle ABC
+      const v0x = B.x - A.x, v0y = B.y - A.y;
+      const v1x = C.x - A.x, v1y = C.y - A.y;
+      const v2x = px  - A.x, v2y = py  - A.y;
+
+      const d00 = v0x*v0x + v0y*v0y;
+      const d01 = v0x*v1x + v0y*v1y;
+      const d11 = v1x*v1x + v1y*v1y;
+      const d20 = v2x*v0x + v2y*v0y;
+      const d21 = v2x*v1x + v2y*v1y;
+      const denom = d00*d11 - d01*d01 || 1e-9;
+
+      let v = (d11*d20 - d01*d21) / denom; // weight for B
+      let wgt = (d00*d21 - d01*d20) / denom; // weight for C
+      let u = 1 - v - wgt; // weight for A
+
+      // Clamp to triangle & normalize to 100
+      u = clamp01(u); v = clamp01(v); wgt = clamp01(wgt);
+      return roundTo100(normalizeTriple(u*100, v*100, wgt*100));
+    }
+
+    // ---------- App state ----------
+    let pTri = [34,33,33];
+    let fTri = [34,33,33];
+
+    // Initial render
+    makeTernary('presentPlot', pTri, getComputedStyle(document.documentElement).getPropertyValue('--blue-500').trim());
+    makeTernary('futurePlot',  fTri, getComputedStyle(document.documentElement).getPropertyValue('--green-500').trim());
+    setSliders('p', pTri);
+    setSliders('f', fTri);
+
+    // Slider handlers → update dot
+    ['p-hwb','p-tech','p-env'].forEach(id=>{
+      document.getElementById(id).addEventListener('input', (e)=>{
+        const tri = currentTriple('p');
+        const n = roundTo100(normalizeTriple(tri[0], tri[1], tri[2]));
+        pTri = n; setSliders('p', n);
+        updatePoint('presentPlot', n, getComputedStyle(document.documentElement).getPropertyValue('--blue-500').trim());
+      });
+    });
+    ['f-hwb','f-tech','f-env'].forEach(id=>{
+      document.getElementById(id).addEventListener('input', (e)=>{
+        const tri = currentTriple('f');
+        const n = roundTo100(normalizeTriple(tri[0], tri[1], tri[2]));
+        fTri = n; setSliders('f', n);
+        updatePoint('futurePlot', n, getComputedStyle(document.documentElement).getPropertyValue('--green-500').trim());
+      });
+    });
+
+    // Overlay clicks → compute (a,b,c) from pixel → barycentric, then update
+    document.getElementById('presentOverlay').addEventListener('click', (e)=>{
+      pTri = overlayToABC(e.currentTarget, e);
+      setSliders('p', pTri);
+      updatePoint('presentPlot', pTri, getComputedStyle(document.documentElement).getPropertyValue('--blue-500').trim());
+    });
+    document.getElementById('futureOverlay').addEventListener('click', (e)=>{
+      fTri = overlayToABC(e.currentTarget, e);
+      setSliders('f', fTri);
+      updatePoint('futurePlot', fTri, getComputedStyle(document.documentElement).getPropertyValue('--green-500').trim());
+    });
+
+    // ---------- Submit (same as before; replace endpoint) ----------
+    const ENDPOINT = 'https://script.google.com/macros/s/AKfycbyxq97OVUliJVXasdH6RL2sKQYFLO41sqUN9u_WibmJQNN7_ZcbMDjeKnKulfLq3RzZ/exec'; // <-- put your Apps Script Web App URL here
+    const SUBMIT_KEY = 'ternary_survey_submitted_v1';
+
+    document.getElementById('submitBtn').addEventListener('click', async ()=>{
+      const status = document.getElementById('status');
+      if(localStorage.getItem(SUBMIT_KEY)){
+        status.textContent = 'You have already submitted. Thanks!';
+        return;
+      }
+      const present = pTri, future = fTri;
+      const respondentId = localStorage.getItem('respondent_id') || uuid();
+      localStorage.setItem('respondent_id', respondentId);
+
+      const payload = {
+        respondentId,
+        present: { hwb: present[0], tech: present[1], env: present[2] },
+        future:  { hwb: future[0],  tech: future[1],  env: future[2]  },
+        ua: navigator.userAgent,
+        ts: new Date().toISOString()
+      };
+
+      status.textContent = 'Submitting...';
+      try{
+        const res = await fetch(ENDPOINT, {
+          method:'POST',
+          headers:{'Content-Type':'text/plain;charset=utf-8'},
+          body: JSON.stringify(payload)
+        });
+        const out = await res.json();
+        if(out.ok){
+          localStorage.setItem(SUBMIT_KEY, '1');
+          status.textContent = 'Submitted. Thank you!';
+        }else{
+          status.textContent = out.message || 'Submission blocked (possible duplicate).';
+        }
+      }catch(err){
+        status.textContent = 'Error submitting. Please try again later.';
+      }
+    });
+  </script>
+</body>
+</html>
