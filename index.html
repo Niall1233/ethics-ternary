@@ -36,7 +36,45 @@
     .tag{display:inline-flex;gap:8px;align-items:center;padding:6px 10px;border-radius:999px;font-size:13px;font-weight:600}
     .tag-blue{background:rgba(59,130,246,.12);color:var(--blue-700)}
     .tag-green{background:rgba(34,197,94,.12);color:var(--green-700)}
-    .plotWrap{position:relative}
+    .plotWrap{ 
+  position: relative; 
+  overflow: visible;   /* 👈 allows labels to show outside plot area */
+}
+
+.corner-label{
+  position:absolute;
+  font-size:12px;
+  font-weight:600;
+  color:#334155;
+  pointer-events:none;
+  text-shadow:0 1px 2px #fff;
+}
+
+/* place labels just OUTSIDE the triangle */
+.corner-label.a { top:-18px; left:50%; transform:translateX(-50%); } /* top apex */
+.corner-label.b { bottom:-16px; left:-4px; }                         /* bottom-left */
+.corner-label.c { bottom:-16px; right:-4px; text-align:right; }      /* bottom-right */
+
+@media (max-width:520px){
+  .corner-label{ font-size:11px; }
+}
+
+.corner-label{
+  position:absolute;
+  font-size:12px;
+  font-weight:600;
+  color:#334155;
+  pointer-events:none;
+  text-shadow:0 1px 2px #fff;
+}
+.corner-label.a { top:-13px; left:50%; transform:translateX(-50%); }  /* top apex */
+.corner-label.b { bottom:-10px; left:-6px; }                           /* bottom-left */
+.corner-label.c { bottom:-10px; right:-6px; text-align:right; }        /* bottom-right */
+
+@media (max-width:520px){
+  .corner-label{ font-size:11px; }
+}
+
     .overlay{
       position:absolute; left:0; top:0; right:0; bottom:0; cursor:crosshair;
       /* transparent click layer */
@@ -56,7 +94,6 @@
 <p style="font-size:16px; font-weight:600;">
   Please rank the importance of the three ethical values below 
   by clicking within each triangle or adjusting the sliders.
-  
 </p>
 
         <p class="muted">Click inside a triangle to place the dot. Sliders & dot always sum to 100.</p>
@@ -74,6 +111,10 @@
         <div class="plotWrap">
           <div id="presentPlot" style="height:420px;"></div>
           <div id="presentOverlay" class="overlay" title="Click to place the dot"></div>
+<div class="corner-label a">Human Well-Being</div>
+  <div class="corner-label b">Technological Progress</div>
+  <div class="corner-label c">Environmental Integrity</div>
+</div>
         </div>
         <div class="card" style="margin-top:10px;background:linear-gradient(180deg,#fff,rgba(59,130,246,.06))">
           <div class="sliders">
@@ -99,6 +140,10 @@
         <div class="plotWrap">
           <div id="futurePlot" style="height:420px;"></div>
           <div id="futureOverlay" class="overlay" title="Click to place the dot"></div>
+<div class="corner-label a">Human Well-Being</div>
+  <div class="corner-label b">Technological Progress</div>
+  <div class="corner-label c">Environmental Integrity</div>
+</div>
         </div>
         <div class="card" style="margin-top:10px;background:linear-gradient(180deg,#fff,rgba(34,197,94,.08))">
           <div class="sliders">
@@ -171,16 +216,16 @@
         a: [tri[0]], b: [tri[1]], c: [tri[2]],
         marker: { size: 12, color }
       }];
-      const layout = {
-        margin: {l: 18, r: 18, b: 18, t: 10},
-        ternary: {
-          sum: 100,
-          aaxis: { title: 'Human Well-Being', min: 0, ticksuffix: '%' },
-          baxis: { title: 'Technological Progress', min: 0, ticksuffix: '%' },
-          caxis: { title: 'Environmental Integrity', min: 0, ticksuffix: '%' }
-        }
-      };
-      const config = { displayModeBar:false, staticPlot:true, responsive:true };
+        const layout = {
+    margin: { l: 22, r: 22, b: 26, t: 18 }, // extra space for tick labels
+    ternary: {
+      sum: 100,
+      aaxis: { title: '', ticksuffix: '%', showticklabels: true },
+      baxis: { title: '', ticksuffix: '%', showticklabels: true },
+      caxis: { title: '', ticksuffix: '%', showticklabels: true }
+    }
+  };
+const config = { displayModeBar:false, staticPlot:true, responsive:true };
       Plotly.newPlot(targetId, data, layout, config);
     }
     function updatePoint(targetId, [a,b,c], color){
